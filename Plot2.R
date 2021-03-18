@@ -1,6 +1,4 @@
 
-
-
 fileName <- file("household_power_consumption.txt") # define a fileName for full data file
 ## Getting full dataset
 data <- read.table("household_power_consumption.txt", header=T, sep=';', na.strings="?", 
