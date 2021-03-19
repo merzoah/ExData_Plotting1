@@ -15,9 +15,11 @@ data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
 DateTime <- paste(as.Date(data$Date), data$Time) 
 data$DateTime <- as.POSIXct(DateTime)
 
-# Open PNG device
-png(file = "Plot2.png", width = 480, height = 480, units = "px")
-
 # Generating Plot2
 plot(data$Global_active_power ~ data$DateTime, type = "l", 
      ylab = "Global Active Power (kilowatts)", xlab = "")
+
+# Open PNG device
+#png(file = "Plot2.png", width = 480, height = 480, units = "px")
+dev.copy(png, file="plot2.png", height=480, width=480)
+dev.off()
