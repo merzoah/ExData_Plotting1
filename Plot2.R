@@ -1,25 +1,22 @@
+#Choosing working directory and file
+data<-read.table(file.choose())
+data <- read.table("household_power_consumption.txt", header=T, sep=';', 
+                   na.strings="?",nrows=2075259, check.names=F, 
+                   stringsAsFactors=F, comment.char="", quote='\"')
 
-fileName <- file("household_power_consumption.txt") # define a fileName for full data file
-## Getting full dataset
-data <- read.table("household_power_consumption.txt", header=T, sep=';', na.strings="?", 
-                   nrows=2075259, check.names=F, stringsAsFactors=F, comment.char="", quote='\"')
+# Selecting adequate lines
+data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
+data<-data[data$Date >= as.Date("2007-02-01") & data$Date <= as.Date("2007-02-02"),]
 
+# Joining day and time to create a new posix date
+data$posix <- as.POSIXct(strptime(paste(data$Date, data$Time, sep = " "),
+                                  format = "%Y-%m-%d %H:%M:%S"))
 
-# ## Subsetting the data from 2007-02-01 to 2007-02-02
-data <- read.table(text = grep("^[1,2]/2/2007", readLines(fileName), value = TRUE), 
-                   col.names = c("Date", "Time", "Global_active_power", "Global_reactive_power", "Voltage", "Global_intensity", "Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), 
-                   sep = ";", header = TRUE)
-
-## Converting dates and time
-data$Date <- as.Date(data$Date, format = "%d/%m/%Y") 
-DateTime <- paste(as.Date(data$Date), data$Time) 
-data$DateTime <- as.POSIXct(DateTime)
-
-# Generating Plot2
-plot(data$Global_active_power ~ data$DateTime, type = "l", 
-     ylab = "Global Active Power (kilowatts)", xlab = "")
-
-# Open PNG device
-#png(file = "Plot2.png", width = 480, height = 480, units = "px")
-dev.copy(png, file="plot2.png", height=480, width=480)
-dev.off()
+png(file = "plot2.png", width = 480, height = 480, units = "px")
+with(data,
+     plot(posix,
+          Global_active_power,
+          type = "l",
+          xlab = "",
+          ylab = "Global Active Power (kilowatts)"))
+dev.off()  # Close the png file device
